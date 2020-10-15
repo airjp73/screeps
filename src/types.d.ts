@@ -1,12 +1,12 @@
-// example declaration file - remove these and add your own custom typings
+type CreepRole = "harvester";
 
-// memory extension samples
 interface CreepMemory {
-  role: string;
+  role: CreepRole;
   room: string;
   working: boolean;
 }
 
 interface Memory {
   uuid: number;
+  numHarvesters: number;
 }
