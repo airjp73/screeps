@@ -36,7 +36,7 @@ export const checkCreepCounts = (): void => {
   if (spawn.spawning) {
     const spawningCreep = Game.creeps[spawn.spawning.name];
     showStatusText(spawn, `🛠 Spawning ${spawningCreep.memory.role}`);
-  } else {
+  } else if (neededCreeps.length) {
     switch (neededCreeps[0]) {
       case "harvester":
         harvester.spawn(spawn);
