@@ -1,5 +1,9 @@
 import { attack } from "creepFunctions/actions";
-import { CreepStateMachine, runCreepStateMachine } from "./creepStateMachine";
+import {
+  CreepRoleDefinition,
+  CreepStateMachine,
+  runCreepStateMachine,
+} from "./creepStateMachine";
 
 const states: CreepStateMachine = {
   patrolling: {
@@ -11,7 +15,8 @@ const states: CreepStateMachine = {
   },
 };
 
-export const soldier = {
+export const soldier: CreepRoleDefinition = {
+  role: "soldier",
   run: runCreepStateMachine(states),
   spawn: (spawner: StructureSpawn): void => {
     spawner.spawnCreep([WORK, CARRY, MOVE], _.uniqueId(), {

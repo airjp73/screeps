@@ -1,5 +1,9 @@
 import { harvest, transfer } from "creepFunctions/actions";
-import { CreepStateMachine, runCreepStateMachine } from "./creepStateMachine";
+import {
+  CreepRoleDefinition,
+  CreepStateMachine,
+  runCreepStateMachine,
+} from "./creepStateMachine";
 
 const states: CreepStateMachine = {
   harvesting: {
@@ -30,7 +34,8 @@ const states: CreepStateMachine = {
   },
 };
 
-export const upgrader = {
+export const upgrader: CreepRoleDefinition = {
+  role: "upgrader",
   run: runCreepStateMachine(states),
   spawn: (spawner: StructureSpawn): void => {
     spawner.spawnCreep([WORK, CARRY, MOVE], _.uniqueId(), {

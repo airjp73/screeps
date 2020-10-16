@@ -5,6 +5,11 @@ export type CreepStateDefinition = {
   check: (creep: Creep) => string | StateChangeAction | undefined;
   perform: (creep: Creep) => void;
 };
+export type CreepRoleDefinition = {
+  role: CreepRole;
+  run: (creep: Creep) => void;
+  spawn: (spawner: StructureSpawn) => void;
+};
 export type CreepStateMachine = { [state: string]: CreepStateDefinition };
 
 export const setCreepState = (

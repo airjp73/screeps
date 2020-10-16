@@ -3,8 +3,8 @@ import { harvester } from "roles/harvester";
 import { soldier } from "roles/soldier";
 import { repairer } from "roles/repairer";
 import { upgrader } from "roles/upgrader";
-import { UnreachableCaseError } from "utils/errors";
 import { forEachCreep } from "utils/forEachCreep";
+import { CreepRoleDefinition } from "roles/creepStateMachine";
 
 const getTargetCreepCounts = () => {
   Memory.targetCreepCounts = {
@@ -36,43 +36,26 @@ export const checkCreepCounts = (): void => {
     roleCounts[creep.memory.role] = currentCount + 1;
   });
 
-  const neededCreeps: CreepRole[] = [];
-  const needCreepOftype = (role: CreepRole, targetCount: number) => {
-    _.range(roleCounts[role] ?? 0, targetCount).forEach(() =>
-      neededCreeps.push(role)
-    );
+  // TODO: Support multiple spawners?
+  const spawner = Game.spawns["Spawn1"];
+  if (spawner.spawning) {
+    const spawningCreep = Game.creeps[spawner.spawning.name];
+    showStatusText(spawner, `🛠 Spawning ${spawningCreep.memory.role}`);
+    return;
+  }
+
+  let creepSpawned = false;
+  const needCreepOftype = (role: CreepRoleDefinition, targetCount: number) => {
+    const numNeeded = targetCount - (roleCounts[role.role] ?? 0);
+    if (!creepSpawned && numNeeded > 0) {
+      role.spawn(spawner);
+      creepSpawned = true;
+    }
   };
 
-  needCreepOftype("harvester", targetCreepCounts.harvester);
-  needCreepOftype("upgrader", targetCreepCounts.upgrader);
-  needCreepOftype("builder", targetCreepCounts.builder);
-  needCreepOftype("soldier", targetCreepCounts.soldier);
-  needCreepOftype("repairer", targetCreepCounts.repairer);
-
-  // TODO: Support multiple spawners?
-  const spawn = Game.spawns["Spawn1"];
-  if (spawn.spawning) {
-    const spawningCreep = Game.creeps[spawn.spawning.name];
-    showStatusText(spawn, `🛠 Spawning ${spawningCreep.memory.role}`);
-  } else if (neededCreeps.length) {
-    switch (neededCreeps[0]) {
-      case "harvester":
-        harvester.spawn(spawn);
-        break;
-      case "upgrader":
-        upgrader.spawn(spawn);
-        break;
-      case "builder":
-        builder.spawn(spawn);
-        break;
-      case "soldier":
-        soldier.spawn(spawn);
-        break;
-      case "repairer":
-        repairer.spawn(spawn);
-        break;
-      default:
-        throw new UnreachableCaseError(neededCreeps[0]);
-    }
-  }
+  needCreepOftype(harvester, targetCreepCounts.harvester);
+  needCreepOftype(upgrader, targetCreepCounts.upgrader);
+  needCreepOftype(builder, targetCreepCounts.builder);
+  needCreepOftype(soldier, targetCreepCounts.soldier);
+  needCreepOftype(repairer, targetCreepCounts.repairer);
 };

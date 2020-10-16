@@ -1,17 +1,20 @@
 import { build, harvest } from "creepFunctions/actions";
 import { getClosest, getCreepTarget } from "creepFunctions/targetAquireing";
 import {
+  CreepRoleDefinition,
   CreepStateMachine,
   runCreepStateMachine,
   setCreepState,
 } from "./creepStateMachine";
 
+const STRUCTURE_PRIORITIES = [STRUCTURE_EXTENSION, STRUCTURE_CONTAINER];
 export const aquireTarget = (room: Room): string => {
-  // Extensions are high priority
-  const extensions = room.find(FIND_CONSTRUCTION_SITES, {
-    filter: (site) => site.structureType === STRUCTURE_EXTENSION,
-  });
-  if (extensions.length) return extensions[0].id;
+  for (const priority of STRUCTURE_PRIORITIES) {
+    const prioritizedStructures = room.find(FIND_CONSTRUCTION_SITES, {
+      filter: (site) => site.structureType === priority,
+    });
+    if (prioritizedStructures.length) return prioritizedStructures[0].id;
+  }
 
   const targets = room.find(FIND_CONSTRUCTION_SITES);
   return targets[0]?.id;
@@ -65,7 +68,8 @@ const states: CreepStateMachine = {
   },
 };
 
-export const builder = {
+export const builder: CreepRoleDefinition = {
+  role: "builder",
   run: runCreepStateMachine(states),
   spawn: (spawner: StructureSpawn): void => {
     spawner.spawnCreep([WORK, CARRY, MOVE], _.uniqueId(), {

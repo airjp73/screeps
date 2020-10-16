@@ -1,6 +1,10 @@
 import { harvest, transfer } from "creepFunctions/actions";
 import { findSourceIdWithLeastHarvesters } from "utils/findSourceIdWithLeastHarvesters";
-import { CreepStateMachine, runCreepStateMachine } from "./creepStateMachine";
+import {
+  CreepRoleDefinition,
+  CreepStateMachine,
+  runCreepStateMachine,
+} from "./creepStateMachine";
 
 const STRUCTURES_IN_NEED_OF_POWER: StructureConstant[] = [
   STRUCTURE_SPAWN,
@@ -58,7 +62,8 @@ const states: CreepStateMachine = {
   },
 };
 
-export const harvester = {
+export const harvester: CreepRoleDefinition = {
+  role: "harvester",
   run: runCreepStateMachine(states),
   spawn: (spawner: StructureSpawn): void => {
     spawner.spawnCreep([WORK, CARRY, MOVE], _.uniqueId(), {
