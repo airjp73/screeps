@@ -1,4 +1,4 @@
-type CreepRole = "harvester" | "upgrader" | "builder";
+type CreepRole = "harvester" | "upgrader" | "builder" | "soldier";
 
 interface CreepMemory {
   role: CreepRole;

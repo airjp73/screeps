@@ -1,5 +1,6 @@
 import { builder } from "roles/builder";
 import { harvester } from "roles/harvester";
+import { soldier } from "roles/soldier";
 import { upgrader } from "roles/upgrader";
 import { UnreachableCaseError } from "utils/errors";
 import { forEachCreep } from "utils/forEachCreep";
@@ -9,6 +10,7 @@ const getTargetCreepCounts = () => {
     harvester: 2,
     upgrader: 1,
     builder: 2,
+    soldier: 1,
     ...Memory.targetCreepCounts,
   };
   return Memory.targetCreepCounts as NonNullable<
@@ -42,6 +44,7 @@ export const checkCreepCounts = (): void => {
   needCreepOftype("harvester", targetCreepCounts.harvester);
   needCreepOftype("upgrader", targetCreepCounts.upgrader);
   needCreepOftype("builder", targetCreepCounts.builder);
+  needCreepOftype("soldier", targetCreepCounts.soldier);
 
   // TODO: Support multiple spawners?
   const spawn = Game.spawns["Spawn1"];
@@ -58,6 +61,9 @@ export const checkCreepCounts = (): void => {
         break;
       case "builder":
         builder.spawn(spawn);
+        break;
+      case "soldier":
+        soldier.spawn(spawn);
         break;
       default:
         throw new UnreachableCaseError(neededCreeps[0]);

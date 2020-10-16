@@ -23,6 +23,10 @@ export const doOrMove = (move: MoveFunc) => <T extends number>(
   return { resultType: "action-performed", code: actionResult };
 };
 
+export const attack = doOrMove((creep, struct) =>
+  creep.moveTo(struct, { visualizePathStyle: { stroke: "#ff0000" } })
+);
+
 export const harvest = doOrMove((creep, struct) =>
   creep.moveTo(struct, { visualizePathStyle: { stroke: "#ffaa00" } })
 );
