@@ -5,7 +5,7 @@ import { forEachCreep } from "utils/forEachCreep";
 
 const setDefaultCounts = () => {
   Memory.numHarvesters = Memory.numHarvesters ?? 2;
-  Memory.numUpgraders = Memory.numUpgraders ?? 2;
+  Memory.numUpgraders = Memory.numUpgraders ?? 1;
 };
 
 const showStatusText = (obj: RoomObject, text: string) => {
