@@ -1,3 +1,4 @@
+import { builder } from "roles/builder";
 import { harvester } from "roles/harvester";
 import { upgrader } from "roles/upgrader";
 import { forEachCreep } from "utils/forEachCreep";
@@ -10,6 +11,8 @@ export const runCreeps = (): void => {
         return harvester.run(creep);
       case "upgrader":
         return upgrader.run(creep);
+      case "builder":
+        return builder.run(creep);
       default:
         throw new UnreachableCaseError(creep.memory.role);
     }

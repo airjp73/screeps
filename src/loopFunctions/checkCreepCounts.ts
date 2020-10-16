@@ -1,11 +1,19 @@
+import { builder } from "roles/builder";
 import { harvester } from "roles/harvester";
 import { upgrader } from "roles/upgrader";
 import { UnreachableCaseError } from "utils/errors";
 import { forEachCreep } from "utils/forEachCreep";
 
-const setDefaultCounts = () => {
-  Memory.numHarvesters = Memory.numHarvesters ?? 2;
-  Memory.numUpgraders = Memory.numUpgraders ?? 1;
+const getTargetCreepCounts = () => {
+  Memory.targetCreepCounts = {
+    harvester: 2,
+    upgrader: 1,
+    builder: 2,
+    ...Memory.targetCreepCounts,
+  };
+  return Memory.targetCreepCounts as NonNullable<
+    typeof Memory["targetCreepCounts"]
+  >;
 };
 
 const showStatusText = (obj: RoomObject, text: string) => {
@@ -16,7 +24,7 @@ const showStatusText = (obj: RoomObject, text: string) => {
 };
 
 export const checkCreepCounts = (): void => {
-  setDefaultCounts();
+  const targetCreepCounts = getTargetCreepCounts();
 
   const roleCounts: { [role: string]: number } = {};
   forEachCreep((creep) => {
@@ -31,8 +39,9 @@ export const checkCreepCounts = (): void => {
     );
   };
 
-  needCreepOftype("harvester", Memory.numHarvesters);
-  needCreepOftype("upgrader", Memory.numUpgraders);
+  needCreepOftype("harvester", targetCreepCounts.harvester);
+  needCreepOftype("upgrader", targetCreepCounts.upgrader);
+  needCreepOftype("builder", targetCreepCounts.builder);
 
   // TODO: Support multiple spawners?
   const spawn = Game.spawns["Spawn1"];
@@ -46,6 +55,9 @@ export const checkCreepCounts = (): void => {
         break;
       case "upgrader":
         upgrader.spawn(spawn);
+        break;
+      case "builder":
+        builder.spawn(spawn);
         break;
       default:
         throw new UnreachableCaseError(neededCreeps[0]);

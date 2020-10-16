@@ -59,7 +59,6 @@ export const harvester = {
       memory: {
         role: "harvester",
         room: spawner.room.name,
-        working: false,
         state: "harvesting",
       },
     });
