@@ -4,6 +4,7 @@ interface CreepMemory {
   role: CreepRole;
   room: string;
   state: string;
+  target?: string;
 }
 
 interface Memory {

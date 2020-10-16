@@ -1,4 +1,5 @@
 import { harvest, transfer } from "creepFunctions/actions";
+import { findSourceIdWithLeastHarvesters } from "utils/findSourceIdWithLeastHarvesters";
 import { CreepStateMachine, runCreepStateMachine } from "./creepStateMachine";
 
 const STRUCTURES_IN_NEED_OF_POWER: StructureConstant[] = [
@@ -24,8 +25,13 @@ const states: CreepStateMachine = {
       }
     },
     perform: (creep: Creep) => {
-      const sources = creep.room.find(FIND_SOURCES);
-      harvest(creep, sources[0], () => creep.harvest(sources[0]));
+      if (creep.memory.target) {
+        const target = Game.getObjectById(creep.memory.target) as Source;
+        harvest(creep, target, () => creep.harvest(target));
+      } else {
+        const sources = creep.room.find(FIND_SOURCES);
+        harvest(creep, sources[0], () => creep.harvest(sources[0]));
+      }
     },
   },
   transfering: {
@@ -60,6 +66,7 @@ export const harvester = {
         role: "harvester",
         room: spawner.room.name,
         state: "harvesting",
+        target: findSourceIdWithLeastHarvesters(spawner.room),
       },
     });
   },
