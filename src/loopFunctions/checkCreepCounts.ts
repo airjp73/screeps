@@ -7,10 +7,10 @@ import { forEachCreep } from "utils/forEachCreep";
 
 const getTargetCreepCounts = () => {
   Memory.targetCreepCounts = {
-    harvester: 2,
+    harvester: 8,
     upgrader: 1,
-    builder: 2,
-    soldier: 1,
+    builder: 4,
+    soldier: 0,
     ...Memory.targetCreepCounts,
   };
   return Memory.targetCreepCounts as NonNullable<
