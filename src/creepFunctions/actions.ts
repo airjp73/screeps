@@ -8,11 +8,11 @@ export type MoveResult = { resultType: "move"; code: MoveResultCode };
 export type ActionResult<T> = { resultType: "action-performed"; code: T };
 export type PerformResult<T> = MoveResult | ActionResult<T>;
 
-export type MoveFunc = (creep: Creep, struct: Structure) => MoveResultCode;
+export type MoveFunc = (creep: Creep, struct: RoomObject) => MoveResultCode;
 
 export const doOrMove = (move: MoveFunc) => <T extends number>(
   creep: Creep,
-  target: Structure,
+  target: RoomObject,
   action: () => T
 ): PerformResult<T> => {
   const actionResult = action();
@@ -25,6 +25,10 @@ export const doOrMove = (move: MoveFunc) => <T extends number>(
 
 export const harvest = doOrMove((creep, struct) =>
   creep.moveTo(struct, { visualizePathStyle: { stroke: "#ffaa00" } })
+);
+
+export const transfer = doOrMove((creep, struct) =>
+  creep.moveTo(struct, { visualizePathStyle: { stroke: "#aaff00" } })
 );
 
 export const build = doOrMove((creep, struct) =>

@@ -9,7 +9,6 @@
     "sourceMap": true,
     "strict": true,
     "experimentalDecorators": true,
-    "noImplicitReturns": true,
     "allowSyntheticDefaultImports": true,
     "allowUnreachableCode": false
   },
