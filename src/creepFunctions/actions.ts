@@ -38,3 +38,7 @@ export const transfer = doOrMove((creep, struct) =>
 export const build = doOrMove((creep, struct) =>
   creep.moveTo(struct, { visualizePathStyle: { stroke: "#ffffff" } })
 );
+
+export const repair = doOrMove((creep, struct) =>
+  creep.moveTo(struct, { visualizePathStyle: { stroke: "#ff9999" } })
+);
