@@ -1,9 +1,11 @@
 import { harvester } from "roles/harvester";
+import { upgrader } from "roles/upgrader";
 import { UnreachableCaseError } from "utils/errors";
 import { forEachCreep } from "utils/forEachCreep";
 
 const setDefaultCounts = () => {
   Memory.numHarvesters = Memory.numHarvesters ?? 2;
+  Memory.numUpgraders = Memory.numUpgraders ?? 2;
 };
 
 const showStatusText = (obj: RoomObject, text: string) => {
@@ -30,6 +32,7 @@ export const checkCreepCounts = (): void => {
   };
 
   needCreepOftype("harvester", Memory.numHarvesters);
+  needCreepOftype("upgrader", Memory.numUpgraders);
 
   // TODO: Support multiple spawners?
   const spawn = Game.spawns["Spawn1"];
@@ -40,6 +43,9 @@ export const checkCreepCounts = (): void => {
     switch (neededCreeps[0]) {
       case "harvester":
         harvester.spawn(spawn);
+        break;
+      case "upgrader":
+        upgrader.spawn(spawn);
         break;
       default:
         throw new UnreachableCaseError(neededCreeps[0]);

@@ -1,4 +1,4 @@
-type CreepRole = "harvester";
+type CreepRole = "harvester" | "upgrader";
 
 interface CreepMemory {
   role: CreepRole;
@@ -10,4 +10,5 @@ interface CreepMemory {
 interface Memory {
   uuid: number;
   numHarvesters: number;
+  numUpgraders: number;
 }
