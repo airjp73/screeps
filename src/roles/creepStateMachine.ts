@@ -1,13 +1,30 @@
+export type StateChangeAction = Partial<CreepMemory> & {
+  type: "change-state";
+};
 export type CreepStateDefinition = {
-  check: (creep: Creep) => string | undefined;
+  check: (creep: Creep) => string | StateChangeAction | undefined;
   perform: (creep: Creep) => void;
 };
 export type CreepStateMachine = { [state: string]: CreepStateDefinition };
+
+export const setCreepState = (
+  newState: Partial<CreepMemory>
+): StateChangeAction => ({
+  ...newState,
+  type: "change-state",
+});
 
 export const runCreepStateMachine = (machine: CreepStateMachine) => (
   creep: Creep
 ): void => {
   const changedState = machine[creep.memory.state].check(creep);
-  if (changedState) creep.memory.state = changedState;
+  if (typeof changedState === "string") {
+    creep.memory.state = changedState;
+  } else if (changedState?.type === "change-state") {
+    creep.memory = {
+      ...creep.memory,
+      ...changedState,
+    };
+  }
   machine[creep.memory.state].perform(creep);
 };
