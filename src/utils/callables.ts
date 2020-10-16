@@ -1,6 +1,6 @@
 import { findSourceIdWithLeastHarvesters } from "./findSourceIdWithLeastHarvesters";
 
-(Game as any).reallocateHarvesters = () => {
+(global as any).reallocateHarvesters = () => {
   Object.values(Game.creeps)
     .filter((creep) => creep.memory.role === "harvester")
     .forEach((creep) => {
