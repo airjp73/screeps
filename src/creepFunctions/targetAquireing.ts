@@ -1,8 +1,3 @@
-export const aquireTarget = (room: Room) => {
-  const targets = room.find(FIND_CONSTRUCTION_SITES);
-  return targets[0]?.id;
-};
-
 export const getCreepTarget = <T extends RoomObject>(
   creep: Creep
 ): T | undefined =>

@@ -1,14 +1,21 @@
 import { build, harvest } from "creepFunctions/actions";
-import {
-  aquireTarget,
-  getClosest,
-  getCreepTarget,
-} from "creepFunctions/targetAquireing";
+import { getClosest, getCreepTarget } from "creepFunctions/targetAquireing";
 import {
   CreepStateMachine,
   runCreepStateMachine,
   setCreepState,
 } from "./creepStateMachine";
+
+export const aquireTarget = (room: Room): string => {
+  // Extensions are high priority
+  const extensions = room.find(FIND_CONSTRUCTION_SITES, {
+    filter: (site) => site.structureType === STRUCTURE_EXTENSION,
+  });
+  if (extensions.length) return extensions[0].id;
+
+  const targets = room.find(FIND_CONSTRUCTION_SITES);
+  return targets[0]?.id;
+};
 
 const states: CreepStateMachine = {
   idle: {
