@@ -5,6 +5,7 @@ import { repairer } from "roles/repairer";
 import { upgrader } from "roles/upgrader";
 import { forEachCreep } from "utils/forEachCreep";
 import { CreepRoleDefinition } from "roles/creepStateMachine";
+import { staticHarvester } from "roles/staticHarvester";
 
 const getTargetCreepCounts = () => {
   Memory.targetCreepCounts = {
@@ -13,6 +14,7 @@ const getTargetCreepCounts = () => {
     builder: 4,
     soldier: 0,
     repairer: 2,
+    staticHarvester: 2,
     ...Memory.targetCreepCounts,
   };
   return Memory.targetCreepCounts as NonNullable<
@@ -58,4 +60,8 @@ export const checkCreepCounts = (): void => {
   needCreepOftype(builder, targetCreepCounts.builder);
   needCreepOftype(soldier, targetCreepCounts.soldier);
   needCreepOftype(repairer, targetCreepCounts.repairer);
+
+  if (Memory.staticHarvesting) {
+    needCreepOftype(staticHarvester, targetCreepCounts.staticHarvester);
+  }
 };

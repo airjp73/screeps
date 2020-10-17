@@ -1,4 +1,10 @@
-type CreepRole = "harvester" | "upgrader" | "builder" | "soldier" | "repairer";
+type CreepRole =
+  | "harvester"
+  | "upgrader"
+  | "builder"
+  | "soldier"
+  | "repairer"
+  | "staticHarvester";
 
 interface CreepMemory {
   role: CreepRole;
@@ -10,4 +16,6 @@ interface CreepMemory {
 interface Memory {
   uuid: number;
   targetCreepCounts?: { [role in CreepRole]: number };
+  harvesterSources: { [name: string]: Id<Source> };
+  staticHarvesting?: boolean;
 }

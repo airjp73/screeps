@@ -5,4 +5,10 @@ export const cleanup = (): void => {
       delete Memory.creeps[name];
     }
   }
+
+  for (const name in Memory.harvesterSources) {
+    if (!(name in Game.creeps)) {
+      delete Memory.creeps[name];
+    }
+  }
 };
