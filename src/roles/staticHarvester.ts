@@ -50,7 +50,7 @@ export const staticHarvester: CreepRoleDefinition = {
   spawn: (spawner: StructureSpawn): void => {
     const sources = spawner.room.find(FIND_SOURCES, {
       filter: (source) =>
-        !Object.values(Memory.harvesterSources).includes(source.id),
+        !Object.values(Memory.harvesterSources ?? {}).includes(source.id),
     });
     if (sources.length) {
       spawner.spawnCreep([WORK, WORK, WORK, WORK, WORK, MOVE], _.uniqueId(), {

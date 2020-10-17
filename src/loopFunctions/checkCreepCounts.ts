@@ -6,6 +6,7 @@ import { upgrader } from "roles/upgrader";
 import { forEachCreep } from "utils/forEachCreep";
 import { CreepRoleDefinition } from "roles/creepStateMachine";
 import { staticHarvester } from "roles/staticHarvester";
+import { GamePhase } from "enums";
 
 const getTargetCreepCounts = () => {
   Memory.targetCreepCounts = {

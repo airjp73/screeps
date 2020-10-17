@@ -14,14 +14,9 @@ interface CreepMemory {
   target?: string;
 }
 
-declare enum GamePhase {
-  INITIAL,
-  STATIC_HARVESTING,
-}
-
 interface Memory {
   uuid: number;
   targetCreepCounts?: { [role in CreepRole]: number };
   harvesterSources: { [name: string]: Id<Source> };
-  phase: GamePhase;
+  phase: number;
 }

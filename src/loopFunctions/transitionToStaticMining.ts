@@ -1,4 +1,5 @@
 import { getClosest } from "creepFunctions/targetAquireing";
+import { GamePhase } from "enums";
 
 export const transitionoStaticMining = (): void => {
   if (Memory.phase < GamePhase.STATIC_HARVESTING) return;
