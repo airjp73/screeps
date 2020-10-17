@@ -9,12 +9,18 @@ import { staticHarvester } from "roles/staticHarvester";
 
 const getTargetCreepCounts = () => {
   Memory.targetCreepCounts = {
+    // Starting Phase
     harvester: 8,
     upgrader: 1,
     builder: 4,
     soldier: 0,
     repairer: 2,
+
+    // Static harvesting phase
     staticHarvester: 2,
+    energyRunner: 4,
+
+    // Support overrides
     ...Memory.targetCreepCounts,
   };
   return Memory.targetCreepCounts as NonNullable<
@@ -61,7 +67,7 @@ export const checkCreepCounts = (): void => {
   needCreepOftype(soldier, targetCreepCounts.soldier);
   needCreepOftype(repairer, targetCreepCounts.repairer);
 
-  if (Memory.staticHarvesting) {
+  if (Memory.phase >= GamePhase.STATIC_HARVESTING) {
     needCreepOftype(staticHarvester, targetCreepCounts.staticHarvester);
   }
 };

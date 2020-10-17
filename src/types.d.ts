@@ -4,7 +4,8 @@ type CreepRole =
   | "builder"
   | "soldier"
   | "repairer"
-  | "staticHarvester";
+  | "staticHarvester"
+  | "energyRunner";
 
 interface CreepMemory {
   role: CreepRole;
@@ -13,9 +14,14 @@ interface CreepMemory {
   target?: string;
 }
 
+declare enum GamePhase {
+  INITIAL,
+  STATIC_HARVESTING,
+}
+
 interface Memory {
   uuid: number;
   targetCreepCounts?: { [role in CreepRole]: number };
   harvesterSources: { [name: string]: Id<Source> };
-  staticHarvesting?: boolean;
+  phase: GamePhase;
 }

@@ -27,6 +27,10 @@ export const attack = doOrMove((creep, struct) =>
   creep.moveTo(struct, { visualizePathStyle: { stroke: "#ff0000" } })
 );
 
+export const withdraw = doOrMove((creep, struct) =>
+  creep.moveTo(struct, { visualizePathStyle: { stroke: "#0000ff" } })
+);
+
 export const harvest = doOrMove((creep, struct) =>
   creep.moveTo(struct, { visualizePathStyle: { stroke: "#ffaa00" } })
 );
