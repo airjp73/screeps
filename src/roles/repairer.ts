@@ -1,34 +1,74 @@
 import { repair, harvest } from "creepFunctions/actions";
+import { getClosest, getCreepTarget } from "creepFunctions/targetAquireing";
 import {
   CreepRoleDefinition,
   CreepStateMachine,
   runCreepStateMachine,
+  setCreepState,
 } from "./creepStateMachine";
 
+const STRUCTURE_PRIORITIES = [STRUCTURE_CONTAINER];
+export const aquireTarget = (room: Room): string => {
+  console.log("aquire repair target");
+  for (const priority of STRUCTURE_PRIORITIES) {
+    const prioritizedStructures = room.find(FIND_STRUCTURES, {
+      filter: (site) =>
+        site.hits < site.hitsMax && site.structureType === priority,
+    });
+    if (prioritizedStructures.length) return prioritizedStructures[0].id;
+  }
+
+  const targets = room.find(FIND_STRUCTURES, {
+    filter: (site) => site.hits < site.hitsMax,
+  });
+  return targets[0]?.id;
+};
+
 const states: CreepStateMachine = {
+  idle: {
+    check: (creep: Creep) => {
+      return setCreepState({
+        state: "harvesting",
+        target: aquireTarget(creep.room),
+      });
+    },
+    perform: () => {
+      // no-op
+    },
+  },
   harvesting: {
     check: (creep: Creep) => {
       if (creep.store.getFreeCapacity() === 0) {
-        return "building";
+        return "repairing";
       }
+      const target = getCreepTarget<Structure>(creep);
+      if (!target || target.hits === target.hitsMax)
+        return setCreepState({ target: aquireTarget(creep.room) });
     },
     perform: (creep: Creep) => {
       const sources = creep.room.find(FIND_SOURCES);
-      harvest(creep, sources[0], () => creep.harvest(sources[0]));
+      const target = getCreepTarget(creep);
+      if (target) {
+        const closestSourceToTarget = getClosest(sources, target);
+        harvest(creep, closestSourceToTarget, () =>
+          creep.harvest(closestSourceToTarget)
+        );
+      }
     },
   },
-  building: {
+  repairing: {
     check: (creep: Creep) => {
       if (creep.store.getUsedCapacity() === 0) {
         return "harvesting";
       }
+      const target = getCreepTarget<Structure>(creep);
+      if (!target || target.hits === target.hitsMax)
+        return setCreepState({ target: aquireTarget(creep.room) });
     },
     perform: (creep: Creep) => {
-      const targets = creep.room.find(FIND_STRUCTURES, {
-        filter: (structure) => structure.hits < structure.hitsMax,
-      });
-      if (targets.length) {
-        repair(creep, targets[0], () => creep.repair(targets[0]));
+      const target = getCreepTarget<Structure>(creep);
+      if (target) {
+        repair(creep, target, () => creep.repair(target));
       }
     },
   },
@@ -42,7 +82,7 @@ export const repairer: CreepRoleDefinition = {
       memory: {
         role: "repairer",
         room: spawner.room.name,
-        state: "harvesting",
+        state: "idle",
       },
     });
   },

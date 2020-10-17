@@ -76,7 +76,7 @@ export const builder: CreepRoleDefinition = {
       memory: {
         role: "builder",
         room: spawner.room.name,
-        state: "harvesting",
+        state: "idle",
       },
     });
   },
