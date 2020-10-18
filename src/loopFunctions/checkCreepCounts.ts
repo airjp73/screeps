@@ -7,6 +7,7 @@ import { forEachCreep } from "utils/forEachCreep";
 import { CreepRoleDefinition } from "roles/creepStateMachine";
 import { staticHarvester } from "roles/staticHarvester";
 import { GamePhase } from "enums";
+import { energyRunner } from "roles/energyRunner";
 
 const getTargetCreepCounts = () => {
   Memory.targetCreepCounts = {
@@ -19,7 +20,7 @@ const getTargetCreepCounts = () => {
 
     // Static harvesting phase
     staticHarvester: 2,
-    energyRunner: 4,
+    energyRunner: 0,
 
     // Support overrides
     ...Memory.targetCreepCounts,
@@ -64,11 +65,16 @@ export const checkCreepCounts = (): void => {
 
   needCreepOftype(harvester, targetCreepCounts.harvester);
   needCreepOftype(upgrader, targetCreepCounts.upgrader);
-  needCreepOftype(builder, targetCreepCounts.builder);
-  needCreepOftype(soldier, targetCreepCounts.soldier);
-  needCreepOftype(repairer, targetCreepCounts.repairer);
 
   if (Memory.phase >= GamePhase.STATIC_HARVESTING) {
     needCreepOftype(staticHarvester, targetCreepCounts.staticHarvester);
   }
+
+  needCreepOftype(builder, targetCreepCounts.builder);
+  needCreepOftype(soldier, targetCreepCounts.soldier);
+  needCreepOftype(repairer, targetCreepCounts.repairer);
+
+  // if (Memory.phase >= GamePhase.ACTIVE_STATIC_HARVESTING) {
+  //   needCreepOftype(energyRunner, targetCreepCounts.energyRunner);
+  // }
 };

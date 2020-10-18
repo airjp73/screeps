@@ -1,4 +1,6 @@
-import { harvest, transfer } from "creepFunctions/actions";
+import { transfer } from "creepFunctions/actions";
+import { getEnergyFromSource } from "creepFunctions/getEnergy";
+import { GamePhase } from "enums";
 import { findSourceIdWithLeastHarvesters } from "utils/findSourceIdWithLeastHarvesters";
 import {
   CreepRoleDefinition,
@@ -9,6 +11,7 @@ import {
 const STRUCTURES_IN_NEED_OF_POWER: StructureConstant[] = [
   STRUCTURE_SPAWN,
   STRUCTURE_EXTENSION,
+  STRUCTURE_TOWER,
 ];
 const STRUCTURE_PRIORITY = [
   ...STRUCTURES_IN_NEED_OF_POWER,
@@ -27,15 +30,17 @@ const states: CreepStateMachine = {
       if (creep.store.getFreeCapacity() === 0) {
         return "transfering";
       }
+      if (!creep.memory.target) {
+        creep.memory.target = findSourceIdWithLeastHarvesters(creep.room);
+      }
     },
     perform: (creep: Creep) => {
-      if (creep.memory.target) {
-        const target = Game.getObjectById(creep.memory.target) as Source;
-        harvest(creep, target, () => creep.harvest(target));
-      } else {
-        const sources = creep.room.find(FIND_SOURCES);
-        harvest(creep, sources[0], () => creep.harvest(sources[0]));
+      if (!creep.memory.target) {
+        Game.notify(`Runner creep ${creep.name} has no target`);
+        return;
       }
+      const source = Game.getObjectById(creep.memory.target) as Source;
+      getEnergyFromSource(creep, source);
     },
   },
   transfering: {
@@ -66,7 +71,25 @@ export const harvester: CreepRoleDefinition = {
   role: "harvester",
   run: runCreepStateMachine(states),
   spawn: (spawner: StructureSpawn): void => {
-    spawner.spawnCreep([WORK, CARRY, MOVE], _.uniqueId(), {
+    const getBody = () => {
+      if (Memory.phase >= GamePhase.STATIC_HARVESTING) {
+        return [
+          CARRY,
+          CARRY,
+          CARRY,
+          CARRY,
+          CARRY,
+          CARRY,
+          MOVE,
+          MOVE,
+          MOVE,
+          MOVE,
+          MOVE,
+        ];
+      }
+      return [WORK, CARRY, MOVE];
+    };
+    spawner.spawnCreep(getBody(), _.uniqueId(), {
       memory: {
         role: "harvester",
         room: spawner.room.name,

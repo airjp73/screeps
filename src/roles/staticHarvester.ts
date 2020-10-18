@@ -18,7 +18,7 @@ const states: CreepStateMachine = {
         const target = Game.getObjectById(creep.memory.target) as Source;
         harvest(creep, target, () => creep.harvest(target));
       } else {
-        console.error(`Creep ${creep.id} is missing a target`);
+        Game.notify(`Creep ${creep.id} is missing a target`);
       }
     },
   },
@@ -38,7 +38,7 @@ const states: CreepStateMachine = {
           creep.transfer(closest, RESOURCE_ENERGY)
         );
       } else {
-        console.error(`Unable to find container for ${creep.id}`);
+        Game.notify(`Unable to find container for ${creep.id}`);
       }
     },
   },
@@ -52,17 +52,21 @@ export const staticHarvester: CreepRoleDefinition = {
       filter: (source) =>
         !Object.values(Memory.harvesterSources ?? {}).includes(source.id),
     });
+    const target = sources[0];
+    const name = _.uniqueId();
+    Memory.harvesterSources = Memory.harvesterSources ?? {};
+    Memory.harvesterSources[name] = target.id;
     if (sources.length) {
-      spawner.spawnCreep([WORK, WORK, WORK, WORK, WORK, MOVE], _.uniqueId(), {
+      spawner.spawnCreep([WORK, WORK, WORK, WORK, WORK, MOVE], name, {
         memory: {
           role: "staticHarvester",
           room: spawner.room.name,
           state: "harvesting",
-          target: sources[0].id,
+          target: target.id,
         },
       });
     } else {
-      console.error("Attempted to spawn static harvester with no free sources");
+      Game.notify("Attempted to spawn static harvester with no free sources");
     }
   },
 };

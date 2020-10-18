@@ -35,7 +35,7 @@ const states: CreepStateMachine = {
         ) as StructureContainer;
         withdraw(creep, target, () => creep.withdraw(target, RESOURCE_ENERGY));
       } else {
-        console.error(`Runner creep ${creep.name} has no target container`);
+        Game.notify(`Runner creep ${creep.name} has no target container`);
       }
     },
   },
