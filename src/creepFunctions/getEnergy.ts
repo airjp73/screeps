@@ -27,7 +27,11 @@ export const getDroppedEnergyIfPresent = (creep: Creep): boolean => {
     filter: (resource) => resource.resourceType === RESOURCE_ENERGY,
   });
   if (droppedEnergy.length) {
-    harvest(creep, droppedEnergy[0], () => creep.pickup(droppedEnergy[0]));
+    const target = getCreepTarget(creep);
+    const energy = target
+      ? getClosest(droppedEnergy, target)
+      : droppedEnergy[0];
+    harvest(creep, energy, () => creep.pickup(energy));
     return true;
   }
   return false;
