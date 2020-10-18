@@ -1,4 +1,5 @@
 import { repair, harvest } from "creepFunctions/actions";
+import { getEnergy } from "creepFunctions/getEnergy";
 import { getClosest, getCreepTarget } from "creepFunctions/targetAquireing";
 import {
   CreepRoleDefinition,
@@ -45,16 +46,7 @@ const states: CreepStateMachine = {
       if (!target || target.hits === target.hitsMax)
         return setCreepState({ target: aquireTarget(creep.room) });
     },
-    perform: (creep: Creep) => {
-      const sources = creep.room.find(FIND_SOURCES);
-      const target = getCreepTarget(creep);
-      if (target) {
-        const closestSourceToTarget = getClosest(sources, target);
-        harvest(creep, closestSourceToTarget, () =>
-          creep.harvest(closestSourceToTarget)
-        );
-      }
-    },
+    perform: (creep: Creep) => getEnergy(creep),
   },
   repairing: {
     check: (creep: Creep) => {

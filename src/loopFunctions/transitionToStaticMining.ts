@@ -25,4 +25,10 @@ export const transitionoStaticMining = (): void => {
         harvester.memory.target = closestContainer.id;
       });
   });
+
+  Object.values(Game.creeps)
+    .filter((creep) => creep.memory.role === "upgrader")
+    .forEach((creep) => {
+      creep.memory.target = creep.room.controller?.id;
+    });
 };

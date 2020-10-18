@@ -1,4 +1,5 @@
-import { harvest, transfer } from "creepFunctions/actions";
+import { transfer } from "creepFunctions/actions";
+import { getEnergy } from "creepFunctions/getEnergy";
 import {
   CreepRoleDefinition,
   CreepStateMachine,
@@ -12,10 +13,7 @@ const states: CreepStateMachine = {
         return "transfering";
       }
     },
-    perform: (creep: Creep) => {
-      const sources = creep.room.find(FIND_SOURCES);
-      harvest(creep, sources[0], () => creep.harvest(sources[0]));
-    },
+    perform: (creep: Creep) => getEnergy(creep),
   },
   transfering: {
     check: (creep: Creep) => {
@@ -43,6 +41,7 @@ export const upgrader: CreepRoleDefinition = {
         role: "upgrader",
         room: spawner.room.name,
         state: "harvesting",
+        target: spawner.room.controller?.id,
       },
     });
   },
