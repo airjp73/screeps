@@ -1,9 +1,9 @@
 import { harvest, withdraw } from "./actions";
 import { getClosest, getCreepTarget } from "./targetAquireing";
 
-const getSourceContainer = (source: Source) => {
+const getSourceContainer = (source: Source): StructureContainer => {
   const containers =
-    source.room.find(FIND_STRUCTURES, {
+    source.room.find<StructureContainer>(FIND_STRUCTURES, {
       filter: (structure) => structure.structureType === STRUCTURE_CONTAINER,
     }) ?? [];
   return getClosest(containers, source);
@@ -14,12 +14,27 @@ export const getEnergyFromSource = (creep: Creep, source: Source): void => {
     Memory.harvesterSources ?? {}
   ).includes(creep.memory.target as Id<Source>);
 
+  // When static harvester is active only grab from container
   if (targetHasStaticHarvester) {
     const target = getSourceContainer(source);
     withdraw(creep, target, () => creep.withdraw(target, RESOURCE_ENERGY));
-  } else {
-    harvest(creep, source, () => creep.harvest(source));
+    return;
   }
+
+  // If no harvester but container has energy
+  const container = getSourceContainer(source);
+  if (
+    container.pos.inRangeTo(source.pos, 4) &&
+    container.store.getUsedCapacity() > 0
+  ) {
+    withdraw(creep, container, () =>
+      creep.withdraw(container, RESOURCE_ENERGY)
+    );
+    return;
+  }
+
+  // Otherwise harvest from a source
+  harvest(creep, source, () => creep.harvest(source));
 };
 
 export const getDroppedEnergyIfPresent = (creep: Creep): boolean => {

@@ -57,7 +57,7 @@ export const checkCreepCounts = (): void => {
   needCreepOftype(repairer, targetCreepCounts.repairer);
   needCreepOftype(builder, targetCreepCounts.builder);
 
-  if (Memory.phase >= GamePhase.STATIC_HARVESTING) {
+  if (Memory.phase >= GamePhase.SETUP_STATIC_HARVESTING) {
     needCreepOftype(staticHarvester, targetCreepCounts.staticHarvester);
   }
 

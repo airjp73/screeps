@@ -1,7 +1,16 @@
 import { GamePhase } from "enums";
 
 export const transitionoStaticMining = (): void => {
-  if (Memory.phase < GamePhase.STATIC_HARVESTING) return;
+  if (Memory.phase < GamePhase.SETUP_STATIC_HARVESTING) return;
+  if (
+    Object.values(Game.creeps).some(
+      (creep) => creep.memory.role === "staticHarvester"
+    )
+  ) {
+    Memory.phase = GamePhase.ACTIVE_STATIC_HARVESTING;
+  } else {
+    Memory.phase = GamePhase.SETUP_STATIC_HARVESTING;
+  }
   // if (Memory.targetCreepCounts) Memory.targetCreepCounts.harvester = 0;
 
   // Object.values(Memory.harvesterSources ?? {}).forEach((sourceId) => {
@@ -30,10 +39,4 @@ export const transitionoStaticMining = (): void => {
   //   .forEach((creep) => {
   //     creep.memory.target = creep.room.controller?.id;
   //   });
-
-  Object.values(Game.creeps)
-    .filter((creep) => creep.memory.role === "energyRunner")
-    .forEach((creep) => {
-      creep.memory.role = "harvester";
-    });
 };

@@ -105,7 +105,7 @@ export const harvester: CreepRoleDefinition = {
         },
       });
 
-    if (Memory.phase >= GamePhase.STATIC_HARVESTING) {
+    if (Memory.phase >= GamePhase.ACTIVE_STATIC_HARVESTING) {
       const result = spawn(superHarvesterParts);
       // Consider edge-case where all the harvesters are dead
       if (result === ERR_NOT_ENOUGH_ENERGY && getNumHarvesters() === 0) {

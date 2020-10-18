@@ -1,6 +1,6 @@
-import { repair, harvest } from "creepFunctions/actions";
+import { repair } from "creepFunctions/actions";
 import { getEnergy } from "creepFunctions/getEnergy";
-import { getClosest, getCreepTarget } from "creepFunctions/targetAquireing";
+import { getCreepTarget } from "creepFunctions/targetAquireing";
 import {
   CreepRoleDefinition,
   CreepStateMachine,
@@ -8,7 +8,11 @@ import {
   setCreepState,
 } from "./creepStateMachine";
 
-const STRUCTURE_PRIORITIES = [STRUCTURE_CONTAINER];
+const STRUCTURE_PRIORITIES = [
+  STRUCTURE_CONTAINER,
+  STRUCTURE_TOWER,
+  STRUCTURE_ROAD,
+];
 export const aquireTarget = (room: Room): string => {
   console.log("aquire repair target");
   for (const priority of STRUCTURE_PRIORITIES) {
