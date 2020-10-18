@@ -10,23 +10,29 @@ import { UnreachableCaseError } from "../utils/errors";
 
 export const runCreeps = (): void => {
   forEachCreep((creep) => {
-    switch (creep.memory.role) {
-      case "harvester":
-        return harvester.run(creep);
-      case "upgrader":
-        return upgrader.run(creep);
-      case "builder":
-        return builder.run(creep);
-      case "soldier":
-        return soldier.run(creep);
-      case "repairer":
-        return repairer.run(creep);
-      case "staticHarvester":
-        return staticHarvester.run(creep);
-      case "energyRunner":
-        return energyRunner.run(creep);
-      default:
-        throw new UnreachableCaseError(creep.memory.role);
+    try {
+      switch (creep.memory.role) {
+        case "harvester":
+          return harvester.run(creep);
+        case "upgrader":
+          return upgrader.run(creep);
+        case "builder":
+          return builder.run(creep);
+        case "soldier":
+          return soldier.run(creep);
+        case "repairer":
+          return repairer.run(creep);
+        case "staticHarvester":
+          return staticHarvester.run(creep);
+        case "energyRunner":
+          return energyRunner.run(creep);
+        default:
+          throw new UnreachableCaseError(creep.memory.role);
+      }
+    } catch (err) {
+      const message = `Failed to run creep ${creep.name} with role ${creep.memory.role}. Error: ${err.message}`;
+      Game.notify(message);
+      console.log(message);
     }
   });
 };

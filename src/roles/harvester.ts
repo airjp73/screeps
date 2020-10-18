@@ -1,5 +1,8 @@
 import { transfer } from "creepFunctions/actions";
-import { getEnergyFromSource } from "creepFunctions/getEnergy";
+import {
+  getDroppedEnergyIfPresent,
+  getEnergyFromSource,
+} from "creepFunctions/getEnergy";
 import { GamePhase } from "enums";
 import { findSourceIdWithLeastHarvesters } from "utils/findSourceIdWithLeastHarvesters";
 import {
@@ -35,6 +38,7 @@ const states: CreepStateMachine = {
       }
     },
     perform: (creep: Creep) => {
+      if (getDroppedEnergyIfPresent(creep)) return;
       if (!creep.memory.target) {
         Game.notify(`Runner creep ${creep.name} has no target`);
         return;

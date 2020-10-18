@@ -1,9 +1,10 @@
-import { withdraw, transfer } from "creepFunctions/actions";
+import { withdraw, transfer, harvest } from "creepFunctions/actions";
 import { findSourceIdWithLeastHarvesters } from "utils/findSourceIdWithLeastHarvesters";
 import {
   CreepRoleDefinition,
   CreepStateMachine,
   runCreepStateMachine,
+  setCreepState,
 } from "./creepStateMachine";
 
 const STRUCTURES_IN_NEED_OF_POWER: StructureConstant[] = [
@@ -27,15 +28,15 @@ const states: CreepStateMachine = {
       if (creep.store.getFreeCapacity() === 0) {
         return "dropOffEnergy";
       }
+      return setCreepState({
+        role: "harvester",
+        state: "harvesting",
+      });
     },
     perform: (creep: Creep) => {
-      if (creep.memory.target) {
-        const target = Game.getObjectById(
-          creep.memory.target
-        ) as StructureContainer;
-        withdraw(creep, target, () => creep.withdraw(target, RESOURCE_ENERGY));
-      } else {
-        Game.notify(`Runner creep ${creep.name} has no target container`);
+      const resource = creep.room.find(FIND_DROPPED_RESOURCES)[0];
+      if (resource) {
+        harvest(creep, resource, () => creep.pickup(resource));
       }
     },
   },
@@ -44,6 +45,10 @@ const states: CreepStateMachine = {
       if (creep.store.getUsedCapacity() === 0) {
         return "getEnergy";
       }
+      return setCreepState({
+        role: "harvester",
+        state: "transfer",
+      });
     },
     perform: (creep: Creep) => {
       const targets = creep.room

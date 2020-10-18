@@ -22,10 +22,21 @@ export const getEnergyFromSource = (creep: Creep, source: Source): void => {
   }
 };
 
+export const getDroppedEnergyIfPresent = (creep: Creep): boolean => {
+  const droppedEnergy = creep.room.find(FIND_DROPPED_RESOURCES, {
+    filter: (resource) => resource.resourceType === RESOURCE_ENERGY,
+  });
+  if (droppedEnergy.length) {
+    harvest(creep, droppedEnergy[0], () => creep.pickup(droppedEnergy[0]));
+    return true;
+  }
+  return false;
+};
 /**
  * Used by non-harvesters to collect the energy they need to perform their duty.
  */
 export const getEnergy = (creep: Creep): void => {
+  if (getDroppedEnergyIfPresent(creep)) return;
   const sources = creep.room.find(FIND_SOURCES);
   const target = getCreepTarget(creep);
   if (target) {

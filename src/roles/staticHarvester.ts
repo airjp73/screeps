@@ -54,17 +54,26 @@ export const staticHarvester: CreepRoleDefinition = {
     });
     const target = sources[0];
     const name = _.uniqueId();
-    Memory.harvesterSources = Memory.harvesterSources ?? {};
-    Memory.harvesterSources[name] = target.id;
-    if (sources.length) {
-      spawner.spawnCreep([WORK, WORK, WORK, WORK, WORK, MOVE], name, {
-        memory: {
-          role: "staticHarvester",
-          room: spawner.room.name,
-          state: "harvesting",
-          target: target.id,
-        },
-      });
+    if (!target) {
+      console.log("No target for static harvester");
+    }
+    if (target && sources.length) {
+      const result = spawner.spawnCreep(
+        [WORK, WORK, WORK, WORK, WORK, MOVE],
+        name,
+        {
+          memory: {
+            role: "staticHarvester",
+            room: spawner.room.name,
+            state: "harvesting",
+            target: target.id,
+          },
+        }
+      );
+      if (result === OK) {
+        Memory.harvesterSources = Memory.harvesterSources ?? {};
+        Memory.harvesterSources[name] = target.id;
+      }
     } else {
       Game.notify("Attempted to spawn static harvester with no free sources");
     }
