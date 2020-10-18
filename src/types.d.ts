@@ -16,7 +16,6 @@ interface CreepMemory {
 
 interface Memory {
   uuid: number;
-  targetCreepCounts?: { [role in CreepRole]: number };
   harvesterSources: { [name: string]: Id<Source> };
   phase: number;
 }

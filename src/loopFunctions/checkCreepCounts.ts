@@ -7,27 +7,18 @@ import { forEachCreep } from "utils/forEachCreep";
 import { CreepRoleDefinition } from "roles/creepStateMachine";
 import { staticHarvester } from "roles/staticHarvester";
 import { GamePhase } from "enums";
-import { energyRunner } from "roles/energyRunner";
 
-const getTargetCreepCounts = () => {
-  Memory.targetCreepCounts = {
-    // Starting Phase
-    harvester: 8,
-    upgrader: 1,
-    builder: 4,
-    soldier: 0,
-    repairer: 2,
+const targetCreepCounts = {
+  // Starting Phase
+  harvester: 4,
+  upgrader: 1,
+  builder: 4,
+  soldier: 0,
+  repairer: 2,
 
-    // Static harvesting phase
-    staticHarvester: 2,
-    energyRunner: 0,
-
-    // Support overrides
-    ...Memory.targetCreepCounts,
-  };
-  return Memory.targetCreepCounts as NonNullable<
-    typeof Memory["targetCreepCounts"]
-  >;
+  // Static harvesting phase
+  staticHarvester: 2,
+  energyRunner: 0,
 };
 
 const showStatusText = (obj: RoomObject, text: string) => {
@@ -38,8 +29,6 @@ const showStatusText = (obj: RoomObject, text: string) => {
 };
 
 export const checkCreepCounts = (): void => {
-  const targetCreepCounts = getTargetCreepCounts();
-
   const roleCounts: { [role: string]: number } = {};
   forEachCreep((creep) => {
     const currentCount = roleCounts[creep.memory.role] ?? 0;
