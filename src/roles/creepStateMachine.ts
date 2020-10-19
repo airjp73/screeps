@@ -10,6 +10,15 @@ export type CreepRoleDefinition = {
   run: (creep: Creep) => void;
   spawn: (spawner: StructureSpawn) => void;
 };
+// todo
+// export type CreepRoleDefinition = {
+//   role: CreepRole;
+//   run: (creep: Creep) => void;
+//   spawn: (
+//     spawner: StructureSpawn,
+//     roleCounts: { [role: string]: number }
+//   ) => boolean;
+// };
 export type CreepStateMachine = { [state: string]: CreepStateDefinition };
 
 export const setCreepState = (

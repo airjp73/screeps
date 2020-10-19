@@ -63,6 +63,8 @@ export const checkCreepCounts = (): void => {
 
   needCreepOftype(soldier, targetCreepCounts.soldier);
 
+  // harvester.spawn(spawner, roleCounts)
+
   // if (Memory.phase >= GamePhase.ACTIVE_STATIC_HARVESTING) {
   //   needCreepOftype(energyRunner, targetCreepCounts.energyRunner);
   // }

@@ -1,5 +1,5 @@
 import { harvest } from "creepFunctions/actions";
-import { getSourceContainer } from "creepFunctions/getEnergy";
+import { getClosestContainer } from "creepFunctions/getEnergy";
 import {
   CreepRoleDefinition,
   CreepStateMachine,
@@ -15,7 +15,7 @@ const states: CreepStateMachine = {
     perform: (creep: Creep) => {
       if (creep.memory.target) {
         const target = Game.getObjectById(creep.memory.target) as Source;
-        const container = getSourceContainer(target);
+        const container = getClosestContainer(target);
         const notStandingOnContainer =
           container &&
           (container.pos.x !== creep.pos.x || container.pos.y !== creep.pos.y);

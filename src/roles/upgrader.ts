@@ -1,5 +1,6 @@
 import { transfer } from "creepFunctions/actions";
 import { getEnergy } from "creepFunctions/getEnergy";
+import { GamePhase } from "enums";
 import {
   CreepRoleDefinition,
   CreepStateMachine,
@@ -32,11 +33,17 @@ const states: CreepStateMachine = {
   },
 };
 
+const basicParts = [WORK, CARRY, MOVE];
+const advancedParts = [WORK, WORK, WORK, WORK, CARRY, MOVE];
 export const upgrader: CreepRoleDefinition = {
   role: "upgrader",
   run: runCreepStateMachine(states),
   spawn: (spawner: StructureSpawn): void => {
-    spawner.spawnCreep([WORK, CARRY, MOVE], _.uniqueId(), {
+    const parts =
+      Memory.phase === GamePhase.ACTIVE_STATIC_HARVESTING
+        ? advancedParts
+        : basicParts;
+    spawner.spawnCreep(parts, _.uniqueId(), {
       memory: {
         role: "upgrader",
         room: spawner.room.name,

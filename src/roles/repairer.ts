@@ -14,7 +14,6 @@ const STRUCTURE_PRIORITIES = [
   STRUCTURE_ROAD,
 ];
 export const aquireTarget = (room: Room): string => {
-  console.log("aquire repair target");
   for (const priority of STRUCTURE_PRIORITIES) {
     const prioritizedStructures = room.find(FIND_STRUCTURES, {
       filter: (site) =>

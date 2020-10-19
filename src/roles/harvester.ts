@@ -2,6 +2,7 @@ import { transfer } from "creepFunctions/actions";
 import {
   getDroppedEnergyIfPresent,
   getEnergyFromSource,
+  getClosestContainer,
 } from "creepFunctions/getEnergy";
 import { GamePhase } from "enums";
 import { findSourceIdWithLeastHarvesters } from "utils/findSourceIdWithLeastHarvesters";
@@ -16,14 +17,12 @@ const STRUCTURES_IN_NEED_OF_POWER: StructureConstant[] = [
   STRUCTURE_EXTENSION,
   STRUCTURE_TOWER,
 ];
-const STRUCTURE_PRIORITY = [
-  ...STRUCTURES_IN_NEED_OF_POWER,
-  STRUCTURE_CONTROLLER,
-];
 const needsPower = (structure: AnyStructure): structure is StructureStorage =>
   STRUCTURES_IN_NEED_OF_POWER.includes(structure.structureType);
+const hasCapacity = (structure: StructureStorage): boolean =>
+  structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
 const findIndex = (type: StructureConstant): number =>
-  STRUCTURE_PRIORITY.findIndex((item) => item === type);
+  STRUCTURES_IN_NEED_OF_POWER.findIndex((item) => item === type);
 const sortyByPriority = (a: AnyStructure, b: AnyStructure): number =>
   findIndex(a.structureType) - findIndex(b.structureType);
 
@@ -57,15 +56,16 @@ const states: CreepStateMachine = {
       const targets = creep.room
         .find(FIND_STRUCTURES, {
           filter: (structure) =>
-            (needsPower(structure) &&
-              structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0) ||
-            structure.structureType === STRUCTURE_CONTROLLER,
+            needsPower(structure) && hasCapacity(structure),
         })
         .sort(sortyByPriority);
-      if (targets.length > 0) {
-        transfer(creep, targets[0], () =>
-          creep.transfer(targets[0], RESOURCE_ENERGY)
-        );
+      const target =
+        targets[0] ??
+        (creep.room.controller && getClosestContainer(creep.room.controller));
+      if (target) {
+        transfer(creep, target, () => creep.transfer(target, RESOURCE_ENERGY));
+      } else {
+        console.log(`Creep ${creep.name} unable to find place to dump energy`);
       }
     },
   },

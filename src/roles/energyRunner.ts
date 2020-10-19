@@ -1,15 +1,20 @@
-import { withdraw, transfer, harvest } from "creepFunctions/actions";
+import { transfer } from "creepFunctions/actions";
+import {
+  getDroppedEnergyIfPresent,
+  getEnergyFromSource,
+} from "creepFunctions/getEnergy";
+import { GamePhase } from "enums";
 import { findSourceIdWithLeastHarvesters } from "utils/findSourceIdWithLeastHarvesters";
 import {
   CreepRoleDefinition,
   CreepStateMachine,
   runCreepStateMachine,
-  setCreepState,
 } from "./creepStateMachine";
 
 const STRUCTURES_IN_NEED_OF_POWER: StructureConstant[] = [
   STRUCTURE_SPAWN,
   STRUCTURE_EXTENSION,
+  STRUCTURE_TOWER,
 ];
 const STRUCTURE_PRIORITY = [
   ...STRUCTURES_IN_NEED_OF_POWER,
@@ -23,32 +28,30 @@ const sortyByPriority = (a: AnyStructure, b: AnyStructure): number =>
   findIndex(a.structureType) - findIndex(b.structureType);
 
 const states: CreepStateMachine = {
-  getEnergy: {
+  harvesting: {
     check: (creep: Creep) => {
       if (creep.store.getFreeCapacity() === 0) {
-        return "dropOffEnergy";
+        return "transfering";
       }
-      return setCreepState({
-        role: "harvester",
-        state: "harvesting",
-      });
+      if (!creep.memory.target) {
+        creep.memory.target = findSourceIdWithLeastHarvesters(creep.room);
+      }
     },
     perform: (creep: Creep) => {
-      const resource = creep.room.find(FIND_DROPPED_RESOURCES)[0];
-      if (resource) {
-        harvest(creep, resource, () => creep.pickup(resource));
+      if (getDroppedEnergyIfPresent(creep)) return;
+      if (!creep.memory.target) {
+        Game.notify(`Runner creep ${creep.name} has no target`);
+        return;
       }
+      const source = Game.getObjectById(creep.memory.target) as Source;
+      getEnergyFromSource(creep, source);
     },
   },
-  dropOffEnergy: {
+  transfering: {
     check: (creep: Creep) => {
       if (creep.store.getUsedCapacity() === 0) {
-        return "getEnergy";
+        return "harvesting";
       }
-      return setCreepState({
-        role: "harvester",
-        state: "transfer",
-      });
     },
     perform: (creep: Creep) => {
       const targets = creep.room
@@ -68,21 +71,51 @@ const states: CreepStateMachine = {
   },
 };
 
+const parts = [
+  CARRY,
+  CARRY,
+  CARRY,
+  CARRY,
+  CARRY,
+  CARRY,
+  MOVE,
+  MOVE,
+  MOVE,
+  MOVE,
+];
+const getNumHarvesters = () =>
+  Object.values(Game.creeps).filter(
+    (creep) => creep.memory.role === "harvester"
+  ).length;
+
 export const energyRunner: CreepRoleDefinition = {
   role: "energyRunner",
   run: runCreepStateMachine(states),
-  spawn: (spawner: StructureSpawn): void => {
-    spawner.spawnCreep(
-      [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE],
-      _.uniqueId(),
-      {
-        memory: {
-          role: "energyRunner",
-          room: spawner.room.name,
-          state: "getEnergy",
-          target: findSourceIdWithLeastHarvesters(spawner.room),
-        },
-      }
-    );
+  spawn: () => {
+    Game.notify("Attempted to spawn an energy runner");
   },
+
+  // spawn: (spawner: StructureSpawn): boolean => {
+  //   const target = findSourceIdWithLeastHarvesters(spawner.room);
+  //   const name = _.uniqueId();
+  //   const spawn = (parts: BodyPartConstant[]) =>
+  //     spawner.spawnCreep(parts, name, {
+  //       memory: {
+  //         role: "harvester",
+  //         room: spawner.room.name,
+  //         state: "harvesting",
+  //         target,
+  //       },
+  //     });
+
+  //   if (Memory.phase >= GamePhase.ACTIVE_STATIC_HARVESTING) {
+  //     const result = spawn(parts);
+  //     // Consider edge-case where all the harvesters are dead
+  //     if (result === ERR_NOT_ENOUGH_ENERGY && getNumHarvesters() === 0) {
+  //       spawn(baseHarvesterParts);
+  //     }
+  //   } else {
+  //     spawn(baseHarvesterParts);
+  //   }
+  // },
 };
