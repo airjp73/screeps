@@ -1,7 +1,7 @@
 import { harvest, withdraw } from "./actions";
 import { getClosest, getCreepTarget } from "./targetAquireing";
 
-const getSourceContainer = (source: Source): StructureContainer => {
+export const getSourceContainer = (source: Source): StructureContainer => {
   const containers =
     source.room.find<StructureContainer>(FIND_STRUCTURES, {
       filter: (structure) => structure.structureType === STRUCTURE_CONTAINER,

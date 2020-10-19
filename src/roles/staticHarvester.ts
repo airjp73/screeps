@@ -1,5 +1,5 @@
-import { harvest, transfer } from "creepFunctions/actions";
-import { getClosest } from "creepFunctions/targetAquireing";
+import { harvest } from "creepFunctions/actions";
+import { getSourceContainer } from "creepFunctions/getEnergy";
 import {
   CreepRoleDefinition,
   CreepStateMachine,
@@ -8,37 +8,26 @@ import {
 
 const states: CreepStateMachine = {
   harvesting: {
-    check: (creep: Creep) => {
-      if (creep.store.getFreeCapacity() === 0) {
-        return "transfering";
-      }
+    check: () => {
+      // no-op; always in harvest mode
+      return undefined;
     },
     perform: (creep: Creep) => {
       if (creep.memory.target) {
         const target = Game.getObjectById(creep.memory.target) as Source;
-        harvest(creep, target, () => creep.harvest(target));
+        const container = getSourceContainer(target);
+        const notStandingOnContainer =
+          container &&
+          (container.pos.x !== creep.pos.x || container.pos.y !== creep.pos.y);
+        if (notStandingOnContainer) {
+          creep.moveTo(container.pos, {
+            visualizePathStyle: { stroke: "#ffaa00" },
+          });
+        } else {
+          harvest(creep, target, () => creep.harvest(target));
+        }
       } else {
         Game.notify(`Creep ${creep.id} is missing a target`);
-      }
-    },
-  },
-  transfering: {
-    check: (creep: Creep) => {
-      if (creep.store.getUsedCapacity() === 0) {
-        return "harvesting";
-      }
-    },
-    perform: (creep: Creep) => {
-      const containers = creep.room.find(FIND_STRUCTURES, {
-        filter: (structure) => structure.structureType === STRUCTURE_CONTAINER,
-      });
-      const closest = getClosest(containers, creep);
-      if (closest) {
-        transfer(creep, closest, () =>
-          creep.transfer(closest, RESOURCE_ENERGY)
-        );
-      } else {
-        Game.notify(`Unable to find container for ${creep.id}`);
       }
     },
   },
