@@ -19,13 +19,14 @@ export const soldier: CreepRoleDefinition = {
   role: "soldier",
   run: runCreepStateMachine(states),
   spawn: (spawner) => {
-    spawner.spawnCreep([WORK, CARRY, MOVE], _.uniqueId(), {
-      memory: {
-        role: "soldier",
-        room: spawner.room.name,
-        state: "patrolling",
-      },
-    });
-    return true;
+    return false;
+    // spawner.spawnCreep([WORK, CARRY, MOVE], _.uniqueId(), {
+    //   memory: {
+    //     role: "soldier",
+    //     room: spawner.room.name,
+    //     state: "patrolling",
+    //   },
+    // });
+    // return true;
   },
 };
