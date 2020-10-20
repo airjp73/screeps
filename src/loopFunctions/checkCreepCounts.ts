@@ -11,7 +11,7 @@ import { GamePhase } from "enums";
 const targetCreepCounts = {
   // Starting Phase
   harvester: 4,
-  upgrader: 1,
+  upgrader: 3,
   builder: 4,
   soldier: 0,
   repairer: 2,

@@ -1,5 +1,5 @@
-import { transfer } from "creepFunctions/actions";
-import { getEnergy } from "creepFunctions/getEnergy";
+import { transfer, withdraw } from "creepFunctions/actions";
+import { getClosestContainer } from "creepFunctions/getEnergy";
 import { GamePhase } from "enums";
 import {
   CreepRoleDefinition,
@@ -14,7 +14,13 @@ const states: CreepStateMachine = {
         return "transfering";
       }
     },
-    perform: (creep: Creep) => getEnergy(creep),
+    perform: (creep: Creep) => {
+      if (!creep.room.controller) return;
+      const container = getClosestContainer(creep.room.controller);
+      withdraw(creep, container, () =>
+        creep.withdraw(container, RESOURCE_ENERGY)
+      );
+    },
   },
   transfering: {
     check: (creep: Creep) => {
