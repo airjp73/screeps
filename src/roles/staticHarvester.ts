@@ -59,7 +59,7 @@ export const staticHarvester: CreepRoleDefinition = {
       filter: (source) =>
         !Object.values(Memory.harvesterSources ?? {}).includes(source.id),
     });
-    if (roleCounts.staticHarvester >= sources.length) return false;
+    if (!sources.length) return false;
 
     const target = sources[0];
     const name = _.uniqueId();
