@@ -18,7 +18,7 @@ const states: CreepStateMachine = {
 export const soldier: CreepRoleDefinition = {
   role: "soldier",
   run: runCreepStateMachine(states),
-  spawn: (spawner: StructureSpawn): void => {
+  spawn: (spawner) => {
     spawner.spawnCreep([WORK, CARRY, MOVE], _.uniqueId(), {
       memory: {
         role: "soldier",
@@ -26,5 +26,6 @@ export const soldier: CreepRoleDefinition = {
         state: "patrolling",
       },
     });
+    return true;
   },
 };

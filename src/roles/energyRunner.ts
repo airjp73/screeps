@@ -3,7 +3,6 @@ import {
   getDroppedEnergyIfPresent,
   getEnergyFromSource,
 } from "creepFunctions/getEnergy";
-import { GamePhase } from "enums";
 import { findSourceIdWithLeastHarvesters } from "utils/findSourceIdWithLeastHarvesters";
 import {
   CreepRoleDefinition,
@@ -71,28 +70,29 @@ const states: CreepStateMachine = {
   },
 };
 
-const parts = [
-  CARRY,
-  CARRY,
-  CARRY,
-  CARRY,
-  CARRY,
-  CARRY,
-  MOVE,
-  MOVE,
-  MOVE,
-  MOVE,
-];
-const getNumHarvesters = () =>
-  Object.values(Game.creeps).filter(
-    (creep) => creep.memory.role === "harvester"
-  ).length;
+// const parts = [
+//   CARRY,
+//   CARRY,
+//   CARRY,
+//   CARRY,
+//   CARRY,
+//   CARRY,
+//   MOVE,
+//   MOVE,
+//   MOVE,
+//   MOVE,
+// ];
+// const getNumHarvesters = () =>
+//   Object.values(Game.creeps).filter(
+//     (creep) => creep.memory.role === "harvester"
+//   ).length;
 
 export const energyRunner: CreepRoleDefinition = {
   role: "energyRunner",
   run: runCreepStateMachine(states),
   spawn: () => {
     Game.notify("Attempted to spawn an energy runner");
+    return false;
   },
 
   // spawn: (spawner: StructureSpawn): boolean => {

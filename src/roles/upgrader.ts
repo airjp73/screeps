@@ -1,6 +1,5 @@
 import { transfer, withdraw } from "creepFunctions/actions";
 import { getClosestContainer } from "creepFunctions/getEnergy";
-import { GamePhase } from "enums";
 import {
   CreepRoleDefinition,
   CreepStateMachine,
@@ -39,17 +38,20 @@ const states: CreepStateMachine = {
   },
 };
 
-const basicParts = [WORK, CARRY, MOVE];
-const advancedParts = [WORK, WORK, WORK, WORK, CARRY, MOVE];
+const level1Parts = [WORK, CARRY, MOVE];
+const level2Parts = [WORK, WORK, WORK, WORK, CARRY, MOVE];
+const level3Parts = [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, MOVE];
 export const upgrader: CreepRoleDefinition = {
   role: "upgrader",
   run: runCreepStateMachine(states),
-  spawn: (spawner: StructureSpawn): void => {
-    const parts =
-      Memory.phase === GamePhase.ACTIVE_STATIC_HARVESTING
-        ? advancedParts
-        : basicParts;
-    spawner.spawnCreep(parts, _.uniqueId(), {
+  spawn: (spawner, roleCounts, numExtensions) => {
+    if (roleCounts.upgrader >= 4) return false;
+    const getParts = () => {
+      if (numExtensions < 5) return level1Parts;
+      if (numExtensions < 10) return level2Parts;
+      return level3Parts;
+    };
+    spawner.spawnCreep(getParts(), _.uniqueId(), {
       memory: {
         role: "upgrader",
         room: spawner.room.name,
@@ -57,5 +59,6 @@ export const upgrader: CreepRoleDefinition = {
         target: spawner.room.controller?.id,
       },
     });
+    return true;
   },
 };

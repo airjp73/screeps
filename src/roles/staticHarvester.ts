@@ -1,5 +1,6 @@
 import { harvest } from "creepFunctions/actions";
 import { getClosestContainer } from "creepFunctions/getEnergy";
+import { GamePhase } from "enums";
 import {
   CreepRoleDefinition,
   CreepStateMachine,
@@ -33,38 +34,37 @@ const states: CreepStateMachine = {
   },
 };
 
+const level2Parts = [WORK, WORK, WORK, WORK, WORK, MOVE];
+const level3Parts = [WORK, WORK, WORK, WORK, WORK, WORK, WORK, MOVE, MOVE];
 export const staticHarvester: CreepRoleDefinition = {
   role: "staticHarvester",
   run: runCreepStateMachine(states),
-  spawn: (spawner: StructureSpawn): void => {
+  spawn: (spawner, roleCounts, numExtensions) => {
+    if (Memory.phase < GamePhase.SETUP_STATIC_HARVESTING) return false;
     const sources = spawner.room.find(FIND_SOURCES, {
       filter: (source) =>
         !Object.values(Memory.harvesterSources ?? {}).includes(source.id),
     });
+    if (roleCounts.staticHarvester >= sources.length) return false;
+
     const target = sources[0];
     const name = _.uniqueId();
-    if (!target) {
-      console.log("No target for static harvester");
+    const getParts = () => {
+      if (numExtensions < 10) return level2Parts;
+      return level3Parts;
+    };
+    const result = spawner.spawnCreep(getParts(), name, {
+      memory: {
+        role: "staticHarvester",
+        room: spawner.room.name,
+        state: "harvesting",
+        target: target.id,
+      },
+    });
+    if (result === OK) {
+      Memory.harvesterSources = Memory.harvesterSources ?? {};
+      Memory.harvesterSources[name] = target.id;
     }
-    if (target && sources.length) {
-      const result = spawner.spawnCreep(
-        [WORK, WORK, WORK, WORK, WORK, MOVE],
-        name,
-        {
-          memory: {
-            role: "staticHarvester",
-            room: spawner.room.name,
-            state: "harvesting",
-            target: target.id,
-          },
-        }
-      );
-      if (result === OK) {
-        Memory.harvesterSources = Memory.harvesterSources ?? {};
-        Memory.harvesterSources[name] = target.id;
-      }
-    } else {
-      Game.notify("Attempted to spawn static harvester with no free sources");
-    }
+    return true;
   },
 };

@@ -4,7 +4,6 @@ import {
   getEnergyFromSource,
   getClosestContainer,
 } from "creepFunctions/getEnergy";
-import { GamePhase } from "enums";
 import { findSourceIdWithLeastHarvesters } from "utils/findSourceIdWithLeastHarvesters";
 import {
   CreepRoleDefinition,
@@ -71,7 +70,8 @@ const states: CreepStateMachine = {
   },
 };
 
-const superHarvesterParts = [
+const level1Parts = [WORK, CARRY, MOVE];
+const level2Parts = [
   CARRY,
   CARRY,
   CARRY,
@@ -83,16 +83,31 @@ const superHarvesterParts = [
   MOVE,
   MOVE,
 ];
-const baseHarvesterParts = [WORK, CARRY, MOVE];
-const getNumHarvesters = () =>
-  Object.values(Game.creeps).filter(
-    (creep) => creep.memory.role === "harvester"
-  ).length;
+const level3Parts = [
+  CARRY,
+  CARRY,
+  CARRY,
+  CARRY,
+  CARRY,
+  CARRY,
+  CARRY,
+  CARRY,
+  MOVE,
+  MOVE,
+  MOVE,
+  MOVE,
+  MOVE,
+  MOVE,
+  MOVE,
+  MOVE,
+];
 
 export const harvester: CreepRoleDefinition = {
   role: "harvester",
   run: runCreepStateMachine(states),
-  spawn: (spawner: StructureSpawn): void => {
+  spawn: (spawner, roleCounts, numExtensions) => {
+    if (roleCounts.harvester >= 4) return false;
+
     const target = findSourceIdWithLeastHarvesters(spawner.room);
     const name = _.uniqueId();
     const spawn = (parts: BodyPartConstant[]) =>
@@ -105,14 +120,17 @@ export const harvester: CreepRoleDefinition = {
         },
       });
 
-    if (Memory.phase >= GamePhase.ACTIVE_STATIC_HARVESTING) {
-      const result = spawn(superHarvesterParts);
-      // Consider edge-case where all the harvesters are dead
-      if (result === ERR_NOT_ENOUGH_ENERGY && getNumHarvesters() === 0) {
-        spawn(baseHarvesterParts);
-      }
-    } else {
-      spawn(baseHarvesterParts);
+    if (roleCounts.harvester === 0 || numExtensions < 5) {
+      spawn(level1Parts);
+      return true;
     }
+
+    if (numExtensions < 10) {
+      spawn(level2Parts);
+      return true;
+    }
+
+    spawn(level3Parts);
+    return true;
   },
 };

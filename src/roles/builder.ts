@@ -1,6 +1,6 @@
-import { build, harvest } from "creepFunctions/actions";
+import { build } from "creepFunctions/actions";
 import { getEnergy } from "creepFunctions/getEnergy";
-import { getClosest, getCreepTarget } from "creepFunctions/targetAquireing";
+import { getCreepTarget } from "creepFunctions/targetAquireing";
 import {
   CreepRoleDefinition,
   CreepStateMachine,
@@ -60,16 +60,47 @@ const states: CreepStateMachine = {
   },
 };
 
+const level1Parts = [WORK, CARRY, MOVE];
+const level2Parts = [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE];
+const level3Parts = [
+  WORK,
+  WORK,
+  WORK,
+  WORK,
+  CARRY,
+  CARRY,
+  CARRY,
+  CARRY,
+  MOVE,
+  MOVE,
+  MOVE,
+  MOVE,
+];
 export const builder: CreepRoleDefinition = {
   role: "builder",
   run: runCreepStateMachine(states),
-  spawn: (spawner: StructureSpawn): void => {
-    spawner.spawnCreep([WORK, CARRY, MOVE], _.uniqueId(), {
-      memory: {
-        role: "builder",
-        room: spawner.room.name,
-        state: "idle",
-      },
-    });
+  spawn: (spawner, roleCounts, numExtensions) => {
+    if (roleCounts.builder >= 4) return false;
+    const spawn = (parts: BodyPartConstant[]) =>
+      spawner.spawnCreep(parts, _.uniqueId(), {
+        memory: {
+          role: "builder",
+          room: spawner.room.name,
+          state: "idle",
+        },
+      });
+
+    if (numExtensions < 5) {
+      spawn(level1Parts);
+      return true;
+    }
+
+    if (numExtensions < 10) {
+      spawn(level2Parts);
+      return true;
+    }
+
+    spawn(level3Parts);
+    return true;
   },
 };

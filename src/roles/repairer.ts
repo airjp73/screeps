@@ -69,16 +69,47 @@ const states: CreepStateMachine = {
   },
 };
 
+const level1Parts = [WORK, CARRY, MOVE];
+const level2Parts = [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE];
+const level3Parts = [
+  WORK,
+  WORK,
+  WORK,
+  WORK,
+  CARRY,
+  CARRY,
+  CARRY,
+  CARRY,
+  MOVE,
+  MOVE,
+  MOVE,
+  MOVE,
+];
 export const repairer: CreepRoleDefinition = {
   role: "repairer",
   run: runCreepStateMachine(states),
-  spawn: (spawner: StructureSpawn): void => {
-    spawner.spawnCreep([WORK, CARRY, MOVE], _.uniqueId(), {
-      memory: {
-        role: "repairer",
-        room: spawner.room.name,
-        state: "idle",
-      },
-    });
+  spawn: (spawner, roleCounts, numExtensions) => {
+    if (roleCounts.repairer >= 2) return false;
+    const spawn = (parts: BodyPartConstant[]) =>
+      spawner.spawnCreep(parts, _.uniqueId(), {
+        memory: {
+          role: "repairer",
+          room: spawner.room.name,
+          state: "idle",
+        },
+      });
+
+    if (numExtensions < 5) {
+      spawn(level1Parts);
+      return true;
+    }
+
+    if (numExtensions < 10) {
+      spawn(level2Parts);
+      return true;
+    }
+
+    spawn(level3Parts);
+    return true;
   },
 };
