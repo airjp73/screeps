@@ -107,7 +107,8 @@ export const repairer: CreepRoleDefinition = {
   role: "repairer",
   run: runCreepStateMachine(states),
   spawn: (spawner, roleCounts, numExtensions) => {
-    if (roleCounts.repairer >= 2) return false;
+    const numRepairer = roleCounts.repairer ?? 0;
+    if (numRepairer >= 2) return false;
     const spawn = (parts: BodyPartConstant[]) =>
       spawner.spawnCreep(parts, _.uniqueId(), {
         memory: {

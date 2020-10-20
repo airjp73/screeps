@@ -128,7 +128,8 @@ export const harvester: CreepRoleDefinition = {
   role: "harvester",
   run: runCreepStateMachine(states),
   spawn: (spawner, roleCounts, numExtensions) => {
-    if (roleCounts.harvester >= 4) return false;
+    const numHarvesters = roleCounts.harvester ?? 0;
+    if (numHarvesters >= 4) return false;
 
     const target = findSourceIdWithLeastHarvesters(spawner.room);
     const name = _.uniqueId();
@@ -143,7 +144,7 @@ export const harvester: CreepRoleDefinition = {
       });
 
     const getParts = () => {
-      if (roleCounts.harvester === 0 || numExtensions < 5) return level1Parts;
+      if (numHarvesters === 0 || numExtensions < 5) return level1Parts;
       if (numExtensions < 10) return level2Parts;
       if (numExtensions < 15) return level3Parts;
       return level4Parts;

@@ -10,7 +10,7 @@ export type CreepRoleDefinition = {
   run: (creep: Creep) => void;
   spawn: (
     spawner: StructureSpawn,
-    roleCounts: { [role: string]: number },
+    roleCounts: { [role in CreepRole]?: number },
     numExtensions: number
   ) => boolean;
 };

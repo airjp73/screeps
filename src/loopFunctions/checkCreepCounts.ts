@@ -36,7 +36,7 @@ export const checkCreepCounts = (): void => {
     return;
   }
 
-  const roleCounts: { [role: string]: number } = {};
+  const roleCounts: { [role in CreepRole]?: number } = {};
   forEachCreep((creep) => {
     const currentCount = roleCounts[creep.memory.role] ?? 0;
     roleCounts[creep.memory.role] = currentCount + 1;
@@ -51,9 +51,9 @@ export const checkCreepCounts = (): void => {
 
   spawn(harvester) ||
     spawn(upgrader) ||
+    spawn(staticHarvester) ||
     spawn(repairer) ||
     spawn(builder) ||
-    spawn(staticHarvester) ||
     spawn(soldier);
 
   // let creepSpawned = false;

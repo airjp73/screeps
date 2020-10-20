@@ -98,7 +98,8 @@ export const builder: CreepRoleDefinition = {
   role: "builder",
   run: runCreepStateMachine(states),
   spawn: (spawner, roleCounts, numExtensions) => {
-    if (roleCounts.builder >= 4) return false;
+    const numBuilder = roleCounts.builder ?? 0;
+    if (numBuilder >= 4) return false;
     const spawn = (parts: BodyPartConstant[]) =>
       spawner.spawnCreep(parts, _.uniqueId(), {
         memory: {
