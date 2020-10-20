@@ -76,6 +76,24 @@ const level3Parts = [
   MOVE,
   MOVE,
 ];
+const level4Parts = [
+  WORK,
+  WORK,
+  WORK,
+  WORK,
+  WORK,
+  CARRY,
+  CARRY,
+  CARRY,
+  CARRY,
+  CARRY,
+  MOVE,
+  MOVE,
+  MOVE,
+  MOVE,
+  MOVE,
+  MOVE,
+];
 export const builder: CreepRoleDefinition = {
   role: "builder",
   run: runCreepStateMachine(states),
@@ -90,17 +108,13 @@ export const builder: CreepRoleDefinition = {
         },
       });
 
-    if (numExtensions < 5) {
-      spawn(level1Parts);
-      return true;
-    }
-
-    if (numExtensions < 10) {
-      spawn(level2Parts);
-      return true;
-    }
-
-    spawn(level3Parts);
+    const getParts = () => {
+      if (numExtensions < 5) return level1Parts;
+      if (numExtensions < 10) return level2Parts;
+      if (numExtensions < 15) return level3Parts;
+      return level4Parts;
+    };
+    spawn(getParts());
     return true;
   },
 };

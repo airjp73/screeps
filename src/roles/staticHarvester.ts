@@ -36,6 +36,20 @@ const states: CreepStateMachine = {
 
 const level2Parts = [WORK, WORK, WORK, WORK, WORK, MOVE];
 const level3Parts = [WORK, WORK, WORK, WORK, WORK, WORK, WORK, MOVE, MOVE];
+const level4Parts = [
+  WORK,
+  WORK,
+  WORK,
+  WORK,
+  WORK,
+  WORK,
+  WORK,
+  WORK,
+  WORK,
+  TOUGH,
+  MOVE,
+  MOVE,
+];
 export const staticHarvester: CreepRoleDefinition = {
   role: "staticHarvester",
   run: runCreepStateMachine(states),
@@ -51,7 +65,8 @@ export const staticHarvester: CreepRoleDefinition = {
     const name = _.uniqueId();
     const getParts = () => {
       if (numExtensions < 10) return level2Parts;
-      return level3Parts;
+      if (numExtensions < 15) return level3Parts;
+      return level4Parts;
     };
     const result = spawner.spawnCreep(getParts(), name, {
       memory: {

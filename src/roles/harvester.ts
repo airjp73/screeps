@@ -101,6 +101,28 @@ const level3Parts = [
   MOVE,
   MOVE,
 ];
+const level4Parts = [
+  CARRY,
+  CARRY,
+  CARRY,
+  CARRY,
+  CARRY,
+  CARRY,
+  CARRY,
+  CARRY,
+  CARRY,
+  CARRY,
+  MOVE,
+  MOVE,
+  MOVE,
+  MOVE,
+  MOVE,
+  MOVE,
+  MOVE,
+  MOVE,
+  MOVE,
+  MOVE,
+];
 
 export const harvester: CreepRoleDefinition = {
   role: "harvester",
@@ -120,17 +142,14 @@ export const harvester: CreepRoleDefinition = {
         },
       });
 
-    if (roleCounts.harvester === 0 || numExtensions < 5) {
-      spawn(level1Parts);
-      return true;
-    }
+    const getParts = () => {
+      if (roleCounts.harvester === 0 || numExtensions < 5) return level1Parts;
+      if (numExtensions < 10) return level2Parts;
+      if (numExtensions < 15) return level3Parts;
+      return level4Parts;
+    };
 
-    if (numExtensions < 10) {
-      spawn(level2Parts);
-      return true;
-    }
-
-    spawn(level3Parts);
+    spawn(getParts());
     return true;
   },
 };
