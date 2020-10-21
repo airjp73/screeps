@@ -59,7 +59,9 @@ export const upgrader: CreepRoleDefinition = {
   role: "upgrader",
   run: runCreepStateMachine(states),
   spawn: (spawner, roleCounts, numExtensions) => {
+    const numStaticHarvester = roleCounts.staticHarvester ?? 0;
     const numUpgrader = roleCounts.upgrader ?? 0;
+    if (numUpgrader >= 1 && numStaticHarvester < 2) return false;
     if (numUpgrader >= 4) return false;
     const getParts = () => {
       if (numExtensions < 5) return level1Parts;
