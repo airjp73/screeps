@@ -65,8 +65,9 @@ export const staticHarvester: CreepRoleDefinition = {
     const name = _.uniqueId();
     const getParts = () => {
       if (numExtensions < 10) return level2Parts;
-      if (numExtensions < 15) return level3Parts;
-      return level4Parts;
+      // if (numExtensions < 15) return level3Parts;
+      // return level4Parts;
+      return level3Parts;
     };
     const result = spawner.spawnCreep(getParts(), name, {
       memory: {

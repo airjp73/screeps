@@ -40,7 +40,7 @@ const states: CreepStateMachine = {
 
 const level1Parts = [WORK, CARRY, MOVE];
 const level2Parts = [WORK, WORK, WORK, WORK, CARRY, MOVE];
-const level3Parts = [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, MOVE];
+const level3Parts = [WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE];
 const level4Parts = [
   WORK,
   WORK,
@@ -64,8 +64,9 @@ export const upgrader: CreepRoleDefinition = {
     const getParts = () => {
       if (numExtensions < 5) return level1Parts;
       if (numExtensions < 10) return level2Parts;
-      if (numExtensions < 15) return level3Parts;
-      return level4Parts;
+      // if (numExtensions < 15) return level3Parts;
+      // return level4Parts;
+      return level3Parts;
     };
     spawner.spawnCreep(getParts(), _.uniqueId(), {
       memory: {

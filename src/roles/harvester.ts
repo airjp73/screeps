@@ -52,6 +52,8 @@ const states: CreepStateMachine = {
       }
     },
     perform: (creep: Creep) => {
+      const controllerContainer =
+        creep.room.controller && getClosestContainer(creep.room.controller);
       const targets = creep.room
         .find(FIND_STRUCTURES, {
           filter: (structure) =>
@@ -59,8 +61,9 @@ const states: CreepStateMachine = {
         })
         .sort(sortyByPriority);
       const target =
-        targets[0] ??
-        (creep.room.controller && getClosestContainer(creep.room.controller));
+        controllerContainer?.store.getUsedCapacity() === 0
+          ? controllerContainer
+          : targets[0];
       if (target) {
         transfer(creep, target, () => creep.transfer(target, RESOURCE_ENERGY));
       } else {
@@ -71,6 +74,7 @@ const states: CreepStateMachine = {
 };
 
 const level1Parts = [WORK, CARRY, MOVE];
+const level2WorkingParts = [WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE];
 const level2Parts = [
   CARRY,
   CARRY,
@@ -129,6 +133,7 @@ export const harvester: CreepRoleDefinition = {
   run: runCreepStateMachine(states),
   spawn: (spawner, roleCounts, numExtensions) => {
     const numHarvesters = roleCounts.harvester ?? 0;
+    const numStaticHarvesters = roleCounts.staticHarvester ?? 0;
     if (numHarvesters >= 4) return false;
 
     const target = findSourceIdWithLeastHarvesters(spawner.room);
@@ -145,9 +150,11 @@ export const harvester: CreepRoleDefinition = {
 
     const getParts = () => {
       if (numHarvesters === 0 || numExtensions < 5) return level1Parts;
+      if (numStaticHarvesters < 1) return level2WorkingParts;
       if (numExtensions < 10) return level2Parts;
-      if (numExtensions < 15) return level3Parts;
-      return level4Parts;
+      // if (numExtensions < 15) return level3Parts;
+      // return level4Parts;
+      return level3Parts;
     };
 
     spawn(getParts());

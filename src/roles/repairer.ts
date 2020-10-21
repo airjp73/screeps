@@ -121,8 +121,9 @@ export const repairer: CreepRoleDefinition = {
     const getParts = () => {
       if (numExtensions < 5) return level1Parts;
       if (numExtensions < 10) return level2Parts;
-      if (numExtensions < 15) return level3Parts;
-      return level4Parts;
+      // if (numExtensions < 15) return level3Parts;
+      // return level4Parts;
+      return level3Parts;
     };
 
     spawn(getParts());
