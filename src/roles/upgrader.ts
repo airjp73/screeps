@@ -62,7 +62,7 @@ export const upgrader: CreepRoleDefinition = {
     const numStaticHarvester = roleCounts.staticHarvester ?? 0;
     const numUpgrader = roleCounts.upgrader ?? 0;
     if (numUpgrader >= 1 && numStaticHarvester < 2) return false;
-    if (numUpgrader >= 4) return false;
+    if (numUpgrader >= 2) return false;
     const getParts = () => {
       if (numExtensions < 5) return level1Parts;
       if (numExtensions < 10) return level2Parts;
