@@ -45,9 +45,7 @@ const states: CreepStateMachine = {
       if (creep.store.getFreeCapacity() === 0) {
         return "repairing";
       }
-      const target = getCreepTarget<Structure>(creep);
-      if (!target || target.hits === target.hitsMax)
-        return setCreepState({ target: aquireTarget(creep.room) });
+      return setCreepState({ target: aquireTarget(creep.room) });
     },
     perform: (creep: Creep) => getEnergy(creep),
   },
@@ -56,9 +54,7 @@ const states: CreepStateMachine = {
       if (creep.store.getUsedCapacity() === 0) {
         return "harvesting";
       }
-      const target = getCreepTarget<Structure>(creep);
-      if (!target || target.hits === target.hitsMax)
-        return setCreepState({ target: aquireTarget(creep.room) });
+      return setCreepState({ target: aquireTarget(creep.room) });
     },
     perform: (creep: Creep) => {
       const target = getCreepTarget<Structure>(creep);
